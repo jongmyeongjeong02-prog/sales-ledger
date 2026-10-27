@@ -1,0 +1,6 @@
+inbox/
+data/
+reports/
+*.pdf
+*.csv
+.env
