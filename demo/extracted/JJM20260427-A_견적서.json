@@ -1,0 +1,54 @@
+{
+  "filename": "JJM20260427-A_견적서.pdf",
+  "document_type": "quote",
+  "quote_no": "JJM20260427-A",
+  "document_date": "2026-04-27",
+  "customer": "가상은하기어연구소03",
+  "supply_amount": 178200000,
+  "vat": null,
+  "total": null,
+  "po_no": null,
+  "items": [
+    {
+      "model": "A1",
+      "part_no": "ZYX",
+      "product_code": "VIRT-1001",
+      "customer_item_code": null,
+      "qty": 8,
+      "unit_price": 14500000,
+      "amount": 116000000,
+      "remark": "SET-08",
+      "line_no": 1
+    },
+    {
+      "model": "C3",
+      "part_no": "XWV",
+      "product_code": "VIRT-1003",
+      "customer_item_code": null,
+      "qty": 5,
+      "unit_price": 9800000,
+      "amount": 49000000,
+      "remark": "SET-08",
+      "line_no": 2
+    },
+    {
+      "model": "E5",
+      "part_no": "VUT",
+      "product_code": "VIRT-1005",
+      "customer_item_code": null,
+      "qty": 2,
+      "unit_price": 6600000,
+      "amount": 13200000,
+      "remark": "SET-08",
+      "line_no": 3
+    }
+  ],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260427-A_견적서.pdf",
+    "quote_no": "PDF text",
+    "document_date": "quote date below No. on PDF"
+  },
+  "uncertain": [
+    "Quote states VAT separate without VAT amount; vat and total left null."
+  ]
+}

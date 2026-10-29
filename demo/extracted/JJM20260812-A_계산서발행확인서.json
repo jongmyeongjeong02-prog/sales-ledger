@@ -1,0 +1,20 @@
+{
+  "filename": "JJM20260812-A_계산서발행확인서.pdf",
+  "document_type": "invoice",
+  "quote_no": "JJM20260812-A",
+  "document_date": "2026-10-01",
+  "customer": "가상은하기어연구소03",
+  "supply_amount": 83100000,
+  "vat": 8310000,
+  "total": 91410000,
+  "po_no": null,
+  "items": [],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260812-A_계산서발행확인서.pdf",
+    "quote_no": "PDF text",
+    "document_date": "invoice issue date on PDF"
+  },
+  "uncertain": [
+    "No item-level quantities recorded on invoice; items empty."
+  ]
+}

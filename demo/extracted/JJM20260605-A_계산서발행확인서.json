@@ -1,0 +1,20 @@
+{
+  "filename": "JJM20260605-A_계산서발행확인서.pdf",
+  "document_type": "invoice",
+  "quote_no": "JJM20260605-A",
+  "document_date": "2026-07-27",
+  "customer": "가상청록기어연구소01",
+  "supply_amount": 101200000,
+  "vat": 10120000,
+  "total": 111320000,
+  "po_no": null,
+  "items": [],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260605-A_계산서발행확인서.pdf",
+    "quote_no": "PDF text",
+    "document_date": "invoice issue date on PDF"
+  },
+  "uncertain": [
+    "No item-level quantities recorded on invoice; items empty."
+  ]
+}

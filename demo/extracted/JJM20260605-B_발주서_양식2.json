@@ -1,0 +1,67 @@
+{
+  "filename": "JJM20260605-B_발주서_양식2.pdf",
+  "document_type": "order",
+  "quote_no": "JJM20260605-B",
+  "document_date": "2026-06-13",
+  "customer": "가상구름기어연구소05",
+  "supply_amount": 150550000,
+  "vat": 15055000,
+  "total": 165605000,
+  "po_no": "PO-VIRTUAL-0260605-B",
+  "items": [
+    {
+      "model": "A1",
+      "part_no": "ZYX",
+      "product_code": null,
+      "customer_item_code": "VIRT-1001",
+      "qty": 3,
+      "unit_price": 14500000,
+      "amount": 43500000,
+      "remark": null,
+      "line_no": 1
+    },
+    {
+      "model": "D4",
+      "part_no": "WVU",
+      "product_code": null,
+      "customer_item_code": "VIRT-1004",
+      "qty": 6,
+      "unit_price": 8200000,
+      "amount": 49200000,
+      "remark": null,
+      "line_no": 2
+    },
+    {
+      "model": "C3",
+      "part_no": "XWV",
+      "product_code": null,
+      "customer_item_code": "VIRT-1003",
+      "qty": 2,
+      "unit_price": 9800000,
+      "amount": 19600000,
+      "remark": null,
+      "line_no": 3
+    },
+    {
+      "model": "B2",
+      "part_no": "YXW",
+      "product_code": null,
+      "customer_item_code": "VIRT-1002",
+      "qty": 3,
+      "unit_price": 12750000,
+      "amount": 38250000,
+      "remark": null,
+      "line_no": 4
+    }
+  ],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260605-B_발주서_양식2.pdf",
+    "quote_no": "filename routing only; no quote number on page",
+    "document_date": "PO date on PDF; independent receipt date not recorded"
+  },
+  "uncertain": [
+    "Quote number absent from page; filename supplied routing identifier, not an explicit document value.",
+    "No separate receipt date on page; document_date is PO issue/written date, not verified receipt date.",
+    "Order product codes are customer item codes, not our product codes."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "filename": "JJM20260827-A_계산서발행확인서.pdf",
+  "document_type": "invoice",
+  "quote_no": "JJM20260827-A",
+  "document_date": "2026-10-02",
+  "customer": "가상별빛기어연구소08",
+  "supply_amount": 181250000,
+  "vat": 18125000,
+  "total": 199375000,
+  "po_no": null,
+  "items": [],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260827-A_계산서발행확인서.pdf",
+    "quote_no": "PDF text",
+    "document_date": "invoice issue date on PDF"
+  },
+  "uncertain": [
+    "No item-level quantities recorded on invoice; items empty."
+  ]
+}

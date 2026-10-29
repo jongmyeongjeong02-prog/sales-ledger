@@ -1,0 +1,87 @@
+{
+  "filename": "JJM20261027-A_견적서.pdf",
+  "document_type": "quote",
+  "quote_no": "JJM20261027-A",
+  "document_date": "2026-10-27",
+  "customer": "가상은하기어연구소03",
+  "supply_amount": 182000000,
+  "vat": null,
+  "total": null,
+  "po_no": null,
+  "items": [
+    {
+      "model": "D4",
+      "part_no": "WVU",
+      "product_code": "VIRT-1004",
+      "customer_item_code": null,
+      "qty": 5,
+      "unit_price": 8200000,
+      "amount": 41000000,
+      "remark": "SET-05",
+      "line_no": 1
+    },
+    {
+      "model": "A1",
+      "part_no": "ZYX",
+      "product_code": "VIRT-1001",
+      "customer_item_code": null,
+      "qty": 1,
+      "unit_price": 14500000,
+      "amount": 14500000,
+      "remark": "SET-05",
+      "line_no": 2
+    },
+    {
+      "model": "E5",
+      "part_no": "VUT",
+      "product_code": "VIRT-1005",
+      "customer_item_code": null,
+      "qty": 6,
+      "unit_price": 6600000,
+      "amount": 39600000,
+      "remark": "SET-05",
+      "line_no": 3
+    },
+    {
+      "model": "G7",
+      "part_no": "TSR",
+      "product_code": "VIRT-1007",
+      "customer_item_code": null,
+      "qty": 2,
+      "unit_price": 3200000,
+      "amount": 6400000,
+      "remark": "SET-05",
+      "line_no": 4
+    },
+    {
+      "model": "C3",
+      "part_no": "XWV",
+      "product_code": "VIRT-1003",
+      "customer_item_code": null,
+      "qty": 5,
+      "unit_price": 9800000,
+      "amount": 49000000,
+      "remark": "SET-05",
+      "line_no": 5
+    },
+    {
+      "model": "F6",
+      "part_no": "UTS",
+      "product_code": "VIRT-1006",
+      "customer_item_code": null,
+      "qty": 7,
+      "unit_price": 4500000,
+      "amount": 31500000,
+      "remark": "SET-05",
+      "line_no": 6
+    }
+  ],
+  "source": {
+    "pdf": "demo/pdfs/JJM20261027-A_견적서.pdf",
+    "quote_no": "PDF text",
+    "document_date": "quote date below No. on PDF"
+  },
+  "uncertain": [
+    "Quote states VAT separate without VAT amount; vat and total left null."
+  ]
+}

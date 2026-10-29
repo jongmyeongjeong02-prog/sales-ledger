@@ -1,6 +1,12 @@
 inbox/
 data/
 reports/
+config/blocklist.local.txt
+!demo/reports/
 *.pdf
 *.csv
+!demo/pdfs/*.pdf
+!demo/*.csv
 .env
+__pycache__/
+*.pyc

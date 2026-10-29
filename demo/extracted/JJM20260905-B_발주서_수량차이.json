@@ -1,0 +1,58 @@
+{
+  "filename": "JJM20260905-B_발주서_수량차이.pdf",
+  "document_type": "order",
+  "quote_no": "JJM20260905-B",
+  "document_date": "2026-09-15",
+  "customer": "가상해솔기어연구소07",
+  "supply_amount": 71550000,
+  "vat": 7155000,
+  "total": 78705000,
+  "po_no": "PO-VIRTUAL-0260905-B",
+  "items": [
+    {
+      "model": "G7",
+      "part_no": "TSR",
+      "product_code": null,
+      "customer_item_code": "C-VIRT-1007",
+      "qty": 6,
+      "unit_price": 3200000,
+      "amount": 19200000,
+      "remark": null,
+      "line_no": 1
+    },
+    {
+      "model": "B2",
+      "part_no": "YXW",
+      "product_code": null,
+      "customer_item_code": "C-VIRT-1002",
+      "qty": 1,
+      "unit_price": 12750000,
+      "amount": 12750000,
+      "remark": null,
+      "line_no": 2
+    },
+    {
+      "model": "E5",
+      "part_no": "VUT",
+      "product_code": null,
+      "customer_item_code": "C-VIRT-1005",
+      "qty": 6,
+      "unit_price": 6600000,
+      "amount": 39600000,
+      "remark": null,
+      "line_no": 3
+    }
+  ],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260905-B_발주서_수량차이.pdf",
+    "quote_no": "filename routing only; no quote number on page",
+    "document_date": "PO date on PDF; independent receipt date not recorded"
+  },
+  "uncertain": [
+    "Quote number absent from page; filename supplied routing identifier, not an explicit document value.",
+    "No separate receipt date on page; document_date is PO issue/written date, not verified receipt date.",
+    "Order product codes are customer item codes, not our product codes.",
+    "Page explicitly lacks a linked quote number; no match inferred from PO number or similar items.",
+    "Comparison with separately extracted quote routed by filename: G7 TSR quantity 6 vs quote 5; PO supply amount 71,550,000 vs quote 68,350,000. Requires confirmation before ledger linkage."
+  ]
+}

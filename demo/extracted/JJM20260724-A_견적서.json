@@ -1,0 +1,65 @@
+{
+  "filename": "JJM20260724-A_견적서.pdf",
+  "document_type": "quote",
+  "quote_no": "JJM20260724-A",
+  "document_date": "2026-07-24",
+  "customer": "가상바람기어연구소06",
+  "supply_amount": 162500000,
+  "vat": null,
+  "total": null,
+  "po_no": null,
+  "items": [
+    {
+      "model": "F6",
+      "part_no": "UTS",
+      "product_code": "VIRT-1006",
+      "customer_item_code": null,
+      "qty": 4,
+      "unit_price": 4500000,
+      "amount": 18000000,
+      "remark": "예비품",
+      "line_no": 1
+    },
+    {
+      "model": "C3",
+      "part_no": "XWV",
+      "product_code": "VIRT-1003",
+      "customer_item_code": null,
+      "qty": 4,
+      "unit_price": 9800000,
+      "amount": 39200000,
+      "remark": "예비품",
+      "line_no": 2
+    },
+    {
+      "model": "A1",
+      "part_no": "ZYX",
+      "product_code": "VIRT-1001",
+      "customer_item_code": null,
+      "qty": 5,
+      "unit_price": 14500000,
+      "amount": 72500000,
+      "remark": "예비품",
+      "line_no": 3
+    },
+    {
+      "model": "D4",
+      "part_no": "WVU",
+      "product_code": "VIRT-1004",
+      "customer_item_code": null,
+      "qty": 4,
+      "unit_price": 8200000,
+      "amount": 32800000,
+      "remark": "예비품",
+      "line_no": 4
+    }
+  ],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260724-A_견적서.pdf",
+    "quote_no": "PDF text",
+    "document_date": "quote date below No. on PDF"
+  },
+  "uncertain": [
+    "Quote states VAT separate without VAT amount; vat and total left null."
+  ]
+}

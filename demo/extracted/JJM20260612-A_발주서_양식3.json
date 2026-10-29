@@ -1,0 +1,66 @@
+{
+  "filename": "JJM20260612-A_발주서_양식3.pdf",
+  "document_type": "order",
+  "quote_no": "JJM20260612-A",
+  "document_date": "2026-06-27",
+  "customer": "가상달빛기어연구소10",
+  "supply_amount": 151950000,
+  "vat": 15195000,
+  "total": 167145000,
+  "po_no": "PO-VIRTUAL-0260612-A",
+  "items": [
+    {
+      "model": "E5",
+      "part_no": "VUT",
+      "product_code": null,
+      "customer_item_code": "C-VIRT-1005",
+      "qty": 5,
+      "unit_price": 6600000,
+      "amount": 33000000,
+      "remark": null,
+      "line_no": 1
+    },
+    {
+      "model": "F6",
+      "part_no": "UTS",
+      "product_code": null,
+      "customer_item_code": "C-VIRT-1006",
+      "qty": 7,
+      "unit_price": 4500000,
+      "amount": 31500000,
+      "remark": null,
+      "line_no": 2
+    },
+    {
+      "model": "D4",
+      "part_no": "WVU",
+      "product_code": null,
+      "customer_item_code": "C-VIRT-1004",
+      "qty": 6,
+      "unit_price": 8200000,
+      "amount": 49200000,
+      "remark": null,
+      "line_no": 3
+    },
+    {
+      "model": "B2",
+      "part_no": "YXW",
+      "product_code": null,
+      "customer_item_code": "C-VIRT-1002",
+      "qty": 3,
+      "unit_price": 12750000,
+      "amount": 38250000,
+      "remark": null,
+      "line_no": 4
+    }
+  ],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260612-A_발주서_양식3.pdf",
+    "quote_no": "PDF text",
+    "document_date": "PO date on PDF; independent receipt date not recorded"
+  },
+  "uncertain": [
+    "No separate receipt date on page; document_date is PO issue/written date, not verified receipt date.",
+    "Order product codes are customer item codes, not our product codes."
+  ]
+}

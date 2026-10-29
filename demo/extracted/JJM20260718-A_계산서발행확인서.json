@@ -1,0 +1,20 @@
+{
+  "filename": "JJM20260718-A_계산서발행확인서.pdf",
+  "document_type": "invoice",
+  "quote_no": "JJM20260718-A",
+  "document_date": "2026-09-29",
+  "customer": "가상바람기어연구소06",
+  "supply_amount": 58950000,
+  "vat": 5895000,
+  "total": 64845000,
+  "po_no": null,
+  "items": [],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260718-A_계산서발행확인서.pdf",
+    "quote_no": "PDF text",
+    "document_date": "invoice issue date on PDF"
+  },
+  "uncertain": [
+    "No item-level quantities recorded on invoice; items empty."
+  ]
+}

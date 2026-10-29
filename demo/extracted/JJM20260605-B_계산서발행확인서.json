@@ -1,0 +1,20 @@
+{
+  "filename": "JJM20260605-B_계산서발행확인서.pdf",
+  "document_type": "invoice",
+  "quote_no": "JJM20260605-B",
+  "document_date": "2026-08-13",
+  "customer": "가상구름기어연구소05",
+  "supply_amount": 150550000,
+  "vat": 15055000,
+  "total": 165605000,
+  "po_no": null,
+  "items": [],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260605-B_계산서발행확인서.pdf",
+    "quote_no": "PDF text",
+    "document_date": "invoice issue date on PDF"
+  },
+  "uncertain": [
+    "No item-level quantities recorded on invoice; items empty."
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "filename": "JJM20260805-B_발주서_양식2.pdf",
+  "document_type": "order",
+  "quote_no": "JJM20260805-B",
+  "document_date": "2026-08-14",
+  "customer": "가상바람기어연구소06",
+  "supply_amount": 86200000,
+  "vat": 8620000,
+  "total": 94820000,
+  "po_no": "PO-VIRTUAL-0260805-B",
+  "items": [
+    {
+      "model": "G7",
+      "part_no": "TSR",
+      "product_code": null,
+      "customer_item_code": "VIRT-1007",
+      "qty": 6,
+      "unit_price": 3200000,
+      "amount": 19200000,
+      "remark": null,
+      "line_no": 1
+    },
+    {
+      "model": "F6",
+      "part_no": "UTS",
+      "product_code": null,
+      "customer_item_code": "VIRT-1006",
+      "qty": 4,
+      "unit_price": 4500000,
+      "amount": 18000000,
+      "remark": null,
+      "line_no": 2
+    },
+    {
+      "model": "C3",
+      "part_no": "XWV",
+      "product_code": null,
+      "customer_item_code": "VIRT-1003",
+      "qty": 5,
+      "unit_price": 9800000,
+      "amount": 49000000,
+      "remark": null,
+      "line_no": 3
+    }
+  ],
+  "source": {
+    "pdf": "demo/pdfs/JJM20260805-B_발주서_양식2.pdf",
+    "quote_no": "filename routing only; no quote number on page",
+    "document_date": "PO date on PDF; independent receipt date not recorded"
+  },
+  "uncertain": [
+    "Quote number absent from page; filename supplied routing identifier, not an explicit document value.",
+    "No separate receipt date on page; document_date is PO issue/written date, not verified receipt date.",
+    "Order product codes are customer item codes, not our product codes."
+  ]
+}
