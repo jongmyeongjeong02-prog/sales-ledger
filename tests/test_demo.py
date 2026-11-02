@@ -129,19 +129,25 @@ class DemoTest(unittest.TestCase):
 
             for row in (r for r in answer if r["document_type"] == "quote"):
                 items = json.loads(row["items_json"])
+                extracted = json.loads((ROOT / "demo" / "extracted" / (Path(row["filename"]).stem + ".json")).read_text(encoding="utf-8"))
+                by_line = {str(i["line_no"]): i for i in extracted["items"]}
                 payload = {"quote_no": row["quote_no"], "quote_date": row["document_date"],
                            "customer": row["customer"], "customer_contact": "신짱", "contact_title": "대리",
                            "sales_rep": "가상영업 담당", "quote_amount": int(row["supply_amount"]),
-                           "items": [dict(i, remark="SET-01") for i in items]}
+                           "items": [dict(i, remark=by_line[str(i["line_no"])]["remark"]) for i in items]}
                 result = cli("add-quote", payload)
                 self.assertEqual(result.returncode, 0, result.stdout)
             for row in (r for r in answer if r["document_type"] == "order"):
                 items = json.loads(row["items_json"])
+                extracted = json.loads((ROOT / "demo" / "extracted" / (Path(row["filename"]).stem + ".json")).read_text(encoding="utf-8"))
+                by_line = {str(i["line_no"]): i for i in extracted["items"]}
                 payload = {"quote_no": row["quote_no"], "received_date": row["document_date"],
                            "po_no": row["po_no"], "order_amount": int(row["supply_amount"]),
                            "order_vat": int(row["vat"]), "order_total": int(row["total"]),
                            "items": [{"model": i["model"], "qty": i["qty"],
-                                      "unit_price": i["unit_price"]} for i in items]}
+                                      "unit_price": i["unit_price"],
+                                      "customer_item_code": by_line[str(i["line_no"])].get("customer_item_code", "")}
+                                     for i in items]}
                 if "도장회신" in row["filename"]:
                     payload["stamped_quote"] = True
                 result = cli("add-order", payload)
@@ -164,6 +170,45 @@ class DemoTest(unittest.TestCase):
                               "invoice_vat", "invoice_total", "lost_date", "memo", "alert_count",
                               "loss_prompted_at", "next_alert_date"):
                     self.assertEqual(found[field], str(row[field]), (row["quote_no"], field))
+            with (out / "expected_items.csv").open(encoding="utf-8-sig", newline="") as f:
+                expected_items = {(r["quote_no"], r["line_no"]): r for r in csv.DictReader(f)}
+            with (data / "items.csv").open(encoding="utf-8-sig", newline="") as f:
+                actual_items = {(r["quote_no"], r["line_no"]): r for r in csv.DictReader(f)}
+            self.assertEqual(len(actual_items), len(expected_items))
+            self.assertEqual(set(actual_items), set(expected_items))
+            for key, row in expected_items.items():
+                for field, value in row.items():
+                    self.assertEqual(actual_items[key][field], value, (key, field))
+            result = subprocess.run([sys.executable, str(ROOT / "scripts" / "report.py"),
+                                     "--ledger", str(data / "ledger.csv"), "--items", str(data / "items.csv"),
+                                     "--as-of", "2026-11-02"], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            report = json.loads(result.stdout)
+            for kind, key in (("order", "orders_by_month"), ("invoice", "sales_by_month")):
+                monthly = defaultdict(list)
+                for row in answer:
+                    if row["document_type"] == kind and row["expected_result"] not in ("unlinked", "mismatch"):
+                        monthly[row["document_date"][:7]].append(row)
+                actual_months = {r["month"]: r for r in report[key]}
+                self.assertEqual(set(actual_months), set(monthly))
+                for month, rows in monthly.items():
+                    for field, source in (("count", None), ("supply_amount", "supply_amount"),
+                                          ("vat", "vat"), ("total", "total")):
+                        wanted = len(rows) if source is None else sum(int(r[source]) for r in rows)
+                        self.assertEqual(actual_months[month][field], wanted, (kind, month, field))
+            leads = defaultdict(list)
+            for item in expected_items.values():
+                if item["lead_days"]:
+                    leads[item["model"]].append((item["delivery_date"], item["quote_no"], int(item["lead_days"])))
+            actual_models = {r["model"]: r for r in report["lead_by_model"]}
+            self.assertEqual(set(actual_models), set(leads))
+            for model, values in leads.items():
+                durations = [v[2] for v in values]
+                self.assertEqual(actual_models[model]["count"], len(values))
+                self.assertEqual(actual_models[model]["average_days"], round(sum(durations) / len(values), 2))
+                self.assertEqual(actual_models[model]["min_days"], min(durations))
+                self.assertEqual(actual_models[model]["max_days"], max(durations))
+                self.assertEqual(actual_models[model]["latest_days"], max(values)[2])
             self.assertEqual(live.read_bytes() if live.exists() else None, live_before)
 
 

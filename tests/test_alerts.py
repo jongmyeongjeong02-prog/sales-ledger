@@ -90,6 +90,36 @@ class AlertsTest(unittest.TestCase):
         self.save([row])
         self.assertEqual(len(json.loads(self.run_cmd("2026-11-01").stdout)["loss_question_targets"]), 0)
 
+    def test_november_second_29_30_60_61_day_preview_and_status_exclusions(self):
+        reference = date(2026, 11, 2)
+        rows = [dict(self.before[0], quote_no=f"Q{age}",
+                     quote_date=(reference - timedelta(days=age)).isoformat(),
+                     status="진행중", alert_count="0", loss_prompted_at="")
+                for age in (29, 30, 60, 61)]
+        rows.extend(dict(rows[-1], quote_no=f"EXCLUDED-{status}", status=status)
+                    for status in ("수주완", "매출완", "실주"))
+        for row in rows[-3:]:
+            if row["status"] == "실주":
+                row["lost_date"] = "2026-10-20"
+            else:
+                row["order_date"] = "2026-10-20"
+        self.save(rows)
+        original = self.ledger.read_bytes()
+        preview = json.loads(self.run_cmd("2026-11-02").stdout)
+        self.assertFalse(preview["applied"])
+        self.assertEqual({a["quote_no"] for a in preview["alert_targets"]}, {"Q60"})
+        self.assertEqual({a["quote_no"] for a in preview["loss_question_targets"]}, {"Q61"})
+        weekly = subprocess.run([sys.executable, str(ROOT / "scripts" / "briefing.py"),
+                                 "--ledger", str(self.ledger), "--as-of", "2026-11-02",
+                                 "--mode", "weekly"], capture_output=True, text=True)
+        self.assertEqual(weekly.returncode, 0, weekly.stderr)
+        self.assertIn("견적제출 1건", weekly.stdout)
+        self.assertIn("확인필요 2건", weekly.stdout)
+        self.assertIn("실주대상 1건", weekly.stdout)
+        for status in ("수주완", "매출완", "실주"):
+            self.assertNotIn(f"EXCLUDED-{status}", weekly.stdout)
+        self.assertEqual(self.ledger.read_bytes(), original)
+
     def test_skipped_run_marks_both_notices_once_without_losing_quote(self):
         row = dict(self.before[0], quote_date="2026-09-01", status="진행중", alert_count="0",
                    loss_prompted_at="", lost_date="", memo="가상 요청")
