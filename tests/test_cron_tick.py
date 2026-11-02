@@ -88,6 +88,21 @@ class CronTickTest(unittest.TestCase):
             require_fictional(read_rows(self.ledger), self.ledger, items)
         self.assertEqual(list(self.manifests.glob('cron_manifest_*.json')), [])
 
+    def test_only_named_fictional_recipient_is_allowed(self):
+        from cron_tick import require_fictional
+        items = self.base / 'items.csv'
+        items.write_text('quote_no,model\n', encoding='utf-8')
+        rows = read_rows(self.ledger)
+        for row in rows:
+            row.update(customer_contact='신짱', contact_title='대리')
+        write_rows(self.ledger, LEDGER_FIELDS, rows)
+        require_fictional(read_rows(self.ledger), self.ledger, items)
+        for contact, title in (('신짱', '과장'), ('가상인물', '대리'), ('', '대리')):
+            rows[0].update(customer_contact=contact, contact_title=title)
+            write_rows(self.ledger, LEDGER_FIELDS, rows)
+            with self.assertRaisesRegex(ValueError, '가상 데이터'):
+                require_fictional(read_rows(self.ledger), self.ledger, items)
+
     def test_local_blocklist_rejects_fictional_marker_in_ledger_or_items(self):
         from cron_tick import require_fictional
         blocklist = self.base / 'blocklist.local.txt'

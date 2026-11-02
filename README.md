@@ -1,36 +1,36 @@
 # 수주·매출대장
 
-견적부터 매출까지 영업 건을 놓치지 않도록 돕는 영업지원 MVP입니다. 실제 회사 데이터 대신 가상 데이터만 사용합니다.
+견적서를 보낸 뒤 발주 확인을 놓치거나 수주·매출 현황과 실제 납기를 따로 계산해야 하는 문제를 줄이는 영업지원 MVP입니다. 공개 자료는 가상 데이터만 사용합니다.
 
-## 기능
-1. 견적서·발주서·계산서 발행확인서 PDF의 항목을 확인한 뒤 CSV 대장에 기록
-2. 견적일 + 30일을 지난 미수주 건에 1회 알림, + 60일을 지난 건은 진행중으로 유지하고 실주대상 질문 1회 (`--as-of`로 기준일 지정; 고객사 연락 없음)
-3. 월별 수주·매출 현황을 HTML로 보고하고 품목별 실제 납기 계산
+## 기능 3개
+1. 견적서·발주서(도장 회신 견적서 포함)·계산서 발행확인서 PDF에서 항목을 추출하고, 담당자 확인 후 CSV 대장에 기록합니다.
+2. 진행중 견적은 30일째부터 확인필요, 60일 초과부터 실주대상으로 표시합니다. 발주가 없으면 30일 초과 알림과 60일 초과 실주 질문을 각 1회 준비하며 자동 실주 처리나 고객사 연락은 하지 않습니다.
+3. 월별 수주·매출과 품목별 실제 납기를 오프라인 HTML 대시보드로 보여 줍니다.
 
-## 폴더 구조
-- `PROJECT.md`: 업무 규칙과 데이터 구조
-- `inbox/`: 받은 PDF 원본 (Git 제외)
-- `data/`: 건·품목 단위 CSV 대장 (Git 제외)
-- `reports/`: 생성한 HTML 보고서 (Git 제외)
-- `demo/`: 시연용 가상 PDF·문서별 정답·`2026-10-31` 예상 대장 (Git 포함; 실제 대장 아님)
-- `scripts/make_demo.py`: 동일 입력에 동일 결과를 내는 가상 문서 생성기
+## 설치 → 가상 데이터 실행 → 대시보드 확인
 
-## 시연 자료 재생성
-`pip install -r requirements-demo.txt` 후 `python scripts/make_demo.py`를 실행합니다. 한국어·한자 출력용 OFL 글꼴은 `assets/fonts/`에 포함되어 있습니다. `demo/`는 공개 가능한 가상 자료이며, 실제 문서와 대장은 `inbox/`, `data/`에만 보관합니다.
+저장소 루트에서 Python 3.10 이상으로 실행합니다. 가상환경은 저장소 밖에 만듭니다.
 
-`python scripts/ledger.py --as-of 2026-10-31 advance`는 **현재 로컬 대장의 발송 기록만 변경**하므로, 시연 자료의 예상 결과만 확인하려면 `demo/expected_ledger.csv`를 열어 보세요. 상태를 자동으로 실주 처리하지 않습니다. `data/`의 파일은 Git에서 제외되며 실행 전 내용과 데이터 출처를 확인해야 합니다.
+```sh
+python3 -m venv "$HOME/.venvs/sales-ledger-demo"
+. "$HOME/.venvs/sales-ledger-demo/bin/activate"
+python -m pip install -r requirements-demo.txt
+python scripts/make_demo.py
+python scripts/dashboard.py --as-of 2026-10-31 --ledger demo/expected_ledger.csv --items demo/expected_items.csv
+```
 
-## 읽기 전용 검증·집계
-- `python scripts/compare_extract.py`: `demo/extracted/`의 PDF별 추출 JSON과 정답표를 비교해 `demo/reports/verify_extract.md`를 만듭니다.
-- `python scripts/alerts.py --as-of 2026-10-31`: 30일 초과 알림·60일 초과 실주대상 질문을 JSON으로 미리 봅니다. **Slack 발송은 하지 않습니다.** 실제로 담당자님께 보낸 후 `--apply`를 명시하면 발송 날짜·횟수만 대장에 기록합니다. 예약 작업은 없습니다.
-- `python scripts/report.py --as-of 2026-10-31`: `data/ledger.csv`·`data/items.csv`의 월별 수주·매출, 품목별 실제 납기와 고객사별 합계를 JSON으로 읽습니다. 대장을 변경하지 않습니다.
-- 가상 기준값으로 직접 실행하려면 `--ledger demo/expected_ledger.csv`를 붙입니다. 납기 집계에는 `--items <가상 items.csv>`도 필요합니다. 검증 테스트는 임시 폴더에만 이를 만듭니다.
+마지막 명령이 출력한 `reports/dashboard_20261031.html`을 브라우저에서 열면 월별 수주·매출과 실제 납기를 확인할 수 있습니다. 기본 대시보드 입력은 로컬 `data/`이므로, 공개 시연에는 위처럼 두 가상 CSV를 명시해야 합니다. 생성기는 가상 PDF 102건과 정답표·가상 예상 대장을 다시 만듭니다. 기존 `demo/pdfs/`를 재생성하기 전에는 원본을 별도로 백업하세요.
 
-## 오프라인 대시보드
-`python scripts/dashboard.py --as-of 2026-10-31` → `reports/dashboard_20261031.html`. 기본 입력은 `data/ledger.csv`와 `data/items.csv`이며 둘 다 변경하지 않습니다. 외부 자산 없이 브라우저에서 열 수 있고 모바일 폭에도 맞춥니다. 화면의 월별·고객사별 수주/매출과 품목별 납기 값은 `report.py` 집계를 그대로 사용합니다. 표시 금액은 공급가액의 백만원 단위(소수 1자리)이며, 4월부터 기준월까지 빈 월도 표시합니다.
+추출 비교는 `python scripts/compare_extract.py`로 실행합니다(`demo/reports/verify_extract.md`). `python -m unittest discover -s tests`로 테스트할 수 있습니다. `python scripts/alerts.py --as-of 2026-10-31 --ledger demo/expected_ledger.csv`는 발송 없이 알림 대상만 미리 봅니다. `--apply`는 실제로 담당자에게 전달된 뒤에만 사용합니다.
 
-수주율 = **표시 기간에 작성한 견적 중 기준일까지 수주된 공급가액** ÷ **같은 견적군의 견적 공급가액**입니다. 아래에는 수주된 견적 건수/견적 건수도 표시합니다. 과거 견적이 기간 중 수주되면 월별 막대·상세 표에는 포함되지만 이 수주율의 분자·분모에는 모두 넣지 않습니다. 월별 합계 표는 건수·공급가액·VAT·총계를 백만원 단위로 펼쳐 볼 수 있습니다. 잔여 포캐스트는 **현재 CSV에서 진행중인** 견적만 보여 줍니다: 경과일 30일 미만은 견적제출, 30~60일은 확인필요, 60일 초과는 실주대상입니다. 어느 구간도 자동으로 실주로 바뀌지 않습니다. 세로 월 막대를 누르면 그 달 건 목록·그 달 고객사별 수주 상위 5곳을, 다시 누르면 전체 기간 상위 5곳을 보여 줍니다. 건 목록은 마우스 드래그 또는 휴대폰 탭으로 여러 줄을 선택하고 합계를 볼 수 있습니다.
+## 평일 08:30 예약 보고
 
-담당자님이 `실주 JJM○○`라고 지시하면 정확한 견적번호를 확인한 뒤 `scripts/ledger.py lost <확인된 JSON>`으로 그 건만 실주 처리합니다. `실주대상 모두 실주`라고 명시적으로 지시하면 먼저 대상 목록을 확인하고 `python scripts/ledger.py --as-of YYYY-MM-DD lost-all`을 실행합니다. 60일 초과이며 여전히 진행중인 건만 대상이며, 그 밖의 건을 자동 변경하지 않습니다.
+담당자 승인 후 외부 스케줄러에서 평일 08:30(Asia/Seoul)에 `scripts/cron_tick.py`를 호출하도록 설정할 수 있습니다. 월요일은 직전 완료된 월~일 주간 보고와 확인필요·실주대상, 화~금은 일일 현황과 새 알림·실주 질문을 준비합니다. 이 스크립트는 가상 자료 여부를 검사하고 메시지·HTML·발송 대기 기록을 만들지만 Slack으로 직접 보내지는 않습니다. 게이트웨이의 전달 성공 기록을 확인한 다음 실행에서만 대장에 발송 이력을 반영하며, 실패한 전달은 보낸 것으로 처리하지 않습니다. 예약 자체는 이 저장소에 등록되지 않습니다.
 
-Slack에서 `금일자 기준 수주현황 보내줘` 또는 `매출현황 보내줘` 요청을 받으면 그날 날짜로 대시보드를 새로 만들고 HTML을 첨부합니다. 실제 정보가 포함되어 있으면 공유하지 않습니다. Git/공개 저장소에는 `reports/`, `data/`, `inbox/`를 올리지 않습니다.
+Slack 전달은 저장소가 아니라 Hermes 게이트웨이 설정에서 담당하며, 인증 토큰은 Hermes의 `.env`에만 보관합니다. 저장소의 `.env.example`에는 Slack 토큰 항목이나 값이 없습니다. 고객사에 자동 연락하지 않습니다.
+
+## 데이터·라이선스
+
+`demo/`는 공개 가능한 가상 PDF·CSV이고 `inbox/`(원본), `data/`(실제 대장), `reports/`(로컬 보고서), `config/blocklist.local.txt`는 Git에서 제외됩니다. 시연 견적서 수신인은 가상 인물 `신짱 대리`입니다. 실제 데이터나 연락처·비밀값은 공개 저장소에 넣지 않습니다.
+
+프로젝트 코드는 [MIT 라이선스](LICENSE)입니다. `assets/fonts/DemoLedgerKR-Regular.ttf`는 별도 [SIL Open Font License 1.1](assets/fonts/OFL.txt)로 재배포하며 저작권 고지·폰트 라이선스는 그대로 유지합니다. 번들 폰트가 있으므로 `DEMO_KOREAN_FONT`는 별도 글꼴을 지정할 때만 쓰는 선택 환경변수입니다. 자세한 업무 규칙은 `PROJECT.md`를 따릅니다.

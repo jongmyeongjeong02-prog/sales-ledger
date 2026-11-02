@@ -63,5 +63,7 @@
     "Stamped returned quote treated as order; quote date is not receipt date. VAT and order total unrecorded; left null."
   ],
   "stamped_quote": true,
-  "quote_date": "2026-05-18"
+  "quote_date": "2026-05-18",
+  "customer_contact": "신짱",
+  "contact_title": "대리"
 }

@@ -61,5 +61,7 @@
   },
   "uncertain": [
     "Quote states VAT separate without VAT amount; vat and total left null."
-  ]
+  ],
+  "customer_contact": "신짱",
+  "contact_title": "대리"
 }

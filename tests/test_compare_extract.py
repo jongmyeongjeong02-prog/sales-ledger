@@ -8,7 +8,7 @@ import tempfile
 import unittest
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "compare_extract.py"
-FIELDS = "filename document_type quote_no customer document_date supply_amount vat total po_no items_json expected_result".split()
+FIELDS = "filename document_type quote_no customer customer_contact contact_title document_date supply_amount vat total po_no items_json expected_result".split()
 
 
 class CompareExtractTest(unittest.TestCase):
@@ -21,7 +21,8 @@ class CompareExtractTest(unittest.TestCase):
         self.extracted.mkdir()
         self.key, self.output = root / "answer_key.csv", root / "verify.md"
         quote = dict(filename="alpha.pdf", document_type="quote", quote_no="JJM20261001-A",
-                     customer="가상회사", document_date="2026-10-01", supply_amount="10000",
+                     customer="가상회사", customer_contact="신짱", contact_title="대리",
+                     document_date="2026-10-01", supply_amount="10000",
                      vat="0", total="10000", po_no="", expected_result="registered",
                      items_json=json.dumps([dict(model="A1", part_no="ZYX", product_code="VIRT-1",
                                                  qty=2, unit_price=5000, amount=10000)]))
@@ -47,7 +48,8 @@ class CompareExtractTest(unittest.TestCase):
 
     def test_reports_per_type_field_accuracy_and_mismatches(self):
         self.write_extracted("alpha.pdf", document_type="quote", quote_no="JJM20261001-A",
-                             customer="가상회사", document_date="2026-10-01", supply_amount=10000,
+                             customer="가상회사", customer_contact="신짱", contact_title="대리",
+                             document_date="2026-10-01", supply_amount=10000,
                              items=[dict(model="A1", part_no="ZYX", product_code="VIRT-1",
                                          qty=2, unit_price=5000, amount=10000)])
         self.write_extracted("beta.pdf", document_type="order", quote_no="JJM20261001-A",
@@ -65,11 +67,21 @@ class CompareExtractTest(unittest.TestCase):
         self.assertIn("items.qty", text)
         self.assertIn("beta.pdf", text)
         self.assertIn("customer", text)
-        self.assertIn("92.59%", text)  # 25 of 27 comparable fields
+        self.assertIn("93.10%", text)  # 27 of 29 comparable fields including recipient
         self.assertIn("100.00%", text)
         self.assertIn("0.00%", text)
         self.assertIn("파일명 연결: 1건", text)
         self.assertIn("별도 수신일 미표시: 1건", text)
+
+    def test_quote_contact_is_compared(self):
+        self.write_extracted("alpha.pdf", document_type="quote", quote_no="JJM20261001-A",
+                             customer="가상회사", document_date="2026-10-01", supply_amount=10000)
+        self.write_extracted("beta.pdf", document_type="order")
+        result = self.run_cmd()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = self.output.read_text(encoding="utf-8")
+        self.assertIn("customer_contact", report)
+        self.assertIn("contact_title", report)
 
     def test_missing_and_extra_json_are_reported_not_silently_ignored(self):
         self.write_extracted("alpha.pdf", document_type="quote", quote_no="JJM20261001-A")

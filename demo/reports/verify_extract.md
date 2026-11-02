@@ -3,7 +3,7 @@
 정답표는 추출 단계에서 사용하지 않았으며, 비교 시에만 읽었습니다.
 
 - PDF: 102개 / 정답 행: 102개 / 추출 JSON: 102개
-- 전체 필드 일치율: **100.00%** (2490/2490)
+- 전체 필드 일치율: **100.00%** (2580/2580)
 - 완전일치 문서: **102/102**
 - 견적서는 VAT·총계 미표시, 도장 회신 견적서는 VAT·총계 미표시: 문서에 없는 계산값을 정확도 분모에서 제외합니다.
 
@@ -17,7 +17,9 @@
 
 | 종류 | 항목 | 일치/대상 | 일치율 |
 |---|---|---:|---:|
+| quote | contact_title | 40/40 | 100.00% |
 | quote | customer | 40/40 | 100.00% |
+| quote | customer_contact | 40/40 | 100.00% |
 | quote | document_date | 40/40 | 100.00% |
 | quote | document_type | 40/40 | 100.00% |
 | quote | items.amount | 160/160 | 100.00% |
@@ -30,7 +32,9 @@
 | quote | quote_no | 40/40 | 100.00% |
 | quote | supply_amount | 40/40 | 100.00% |
 | quote | **문서 완전일치** | 40/40 | 100.00% |
+| order | contact_title | 5/5 | 100.00% |
 | order | customer | 34/34 | 100.00% |
+| order | customer_contact | 5/5 | 100.00% |
 | order | document_date | 34/34 | 100.00% |
 | order | document_type | 34/34 | 100.00% |
 | order | items.amount | 133/133 | 100.00% |

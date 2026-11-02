@@ -18,7 +18,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
-from ledger import LEDGER_FIELDS
+from ledger import ITEM_FIELDS, LEDGER_FIELDS
 
 ROOT = Path(__file__).resolve().parents[1]
 SEED = 20261031
@@ -35,7 +35,7 @@ CATALOG = (
 )
 CUSTOMERS = tuple(f"가상{word}기어연구소{i:02d}" for i, word in enumerate(
     ("청록", "노을", "은하", "새벽", "구름", "바람", "해솔", "별빛", "푸른", "달빛", "봄결", "여울"), 1))
-ANSWER_FIELDS = "filename document_type quote_no customer document_date supply_amount vat total po_no items_json expected_result".split()
+ANSWER_FIELDS = "filename document_type quote_no customer customer_contact contact_title document_date supply_amount vat total po_no items_json expected_result".split()
 WIDTH, HEIGHT = A4
 
 
@@ -104,7 +104,7 @@ def quote_pdf(path, quote, stamped=False, received=None):
         c.line(213, 751, 368, 751)
         right(c, 565, 763, f"No. {quote['quote_no']}", 9)
         right(c, 565, 744, quote["quote_date"], 9)
-        text(c, 32, 701, f"{quote['customer']} 담당자님 貴下", 10)
+        text(c, 32, 701, f"{quote['customer']} 신짱 대리님 貴下", 10)
         text(c, 32, 680, "하기와 같이 견적을 제출합니다.", 9)
         text(c, 365, 682, "당사", 12)
         text(c, 365, 662, "가상 문서 · 연락처 없음", 8)
@@ -272,7 +272,10 @@ def csv_write(path, fields, rows):
 
 def answer(filename, kind, quote, when, amount, vat, items, result, po_no=""):
     return dict(filename=filename, document_type=kind, quote_no=quote["quote_no"],
-                customer=quote["customer"], document_date=when.isoformat(),
+                customer=quote["customer"],
+                customer_contact="신짱" if kind == "quote" or "도장회신" in filename else "",
+                contact_title="대리" if kind == "quote" or "도장회신" in filename else "",
+                document_date=when.isoformat(),
                 supply_amount=amount, vat=vat, total=amount + vat, po_no=po_no,
                 items_json=json.dumps(items, ensure_ascii=False, separators=(",", ":")), expected_result=result)
 
@@ -303,8 +306,8 @@ def build(out):
         quote_pdf(pdfs / qname, q)
         rows.append(answer(qname, "quote", q, quote_day, q["amount"], 0, q["items"], "registered"))
         record = {key: "" for key in LEDGER_FIELDS}
-        record.update(quote_no=q["quote_no"], customer=q["customer"], customer_contact="",
-                      contact_title="", sales_rep="가상영업 담당", quote_date=q["quote_date"],
+        record.update(quote_no=q["quote_no"], customer=q["customer"], customer_contact="신짱",
+                      contact_title="대리", sales_rep="가상영업 담당", quote_date=q["quote_date"],
                       quote_amount=q["amount"], alert_count="0", status="진행중", updated_at=q["quote_date"])
         if (month, idx) in unorder:
             if quote_day + timedelta(days=30) < AS_OF:
@@ -351,6 +354,27 @@ def build(out):
     rows.append(answer(name, "order", mismatch_quote, date(2026, 9, 15), amount, vat, items, "mismatch", po_no))
     csv_write(out / "answer_key.csv", ANSWER_FIELDS, rows)
     csv_write(out / "expected_ledger.csv", LEDGER_FIELDS, expected)
+    by_quote = {q["quote_no"]: q for q in quotes}
+    orders = {r["quote_no"]: r for r in rows if r["document_type"] == "order"
+              and r["expected_result"] == "connected"}
+    item_rows = []
+    for record in expected:
+        quote_no = record["quote_no"]
+        quote = by_quote[quote_no]
+        ordered_items = json.loads(orders[quote_no]["items_json"]) if quote_no in orders else []
+        stamped = quote_no in orders and "도장회신" in orders[quote_no]["filename"]
+        lead_days = ((date.fromisoformat(record["invoice_date"]) - date.fromisoformat(record["order_date"])).days
+                     if record["invoice_date"] else "")
+        for index, item in enumerate(quote["items"]):
+            item_rows.append(dict(quote_no=quote_no, line_no=item["line_no"], model=item["model"],
+                                  part_no=item["part_no"], product_code=item["product_code"],
+                                  customer_item_code=(ordered_items[index]["product_code"]
+                                                      if ordered_items and not stamped else ""),
+                                  remark="예비품" if quote["remark"] == "예비품 견적서" else quote["remark"],
+                                  qty=item["qty"], unit_price=item["unit_price"], amount=item["amount"],
+                                  order_date=record["order_date"], delivery_date=record["invoice_date"],
+                                  lead_days=lead_days))
+    csv_write(out / "expected_items.csv", ITEM_FIELDS, item_rows)
     print(f"generated {len(quotes)} quotes, {len([r for r in rows if r['document_type']=='order' and r['expected_result']=='connected'])} connected orders, {len([r for r in rows if r['document_type']=='invoice'])} invoices, 2 exception POs")
 
 

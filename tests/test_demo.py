@@ -37,6 +37,19 @@ class DemoTest(unittest.TestCase):
             exceptions = [r for r in answer if r["expected_result"] in ("unlinked", "mismatch")]
             self.assertEqual((len(quotes), len(orders), len(exceptions)), (40, 32, 2))
             self.assertEqual(len(ledger), 40)
+            with (out / "expected_items.csv").open(encoding="utf-8-sig", newline="") as f:
+                expected_items = list(csv.DictReader(f))
+            self.assertEqual(len(expected_items), sum(len(json.loads(q["items_json"])) for q in quotes))
+            by_quote = {row["quote_no"]: row for row in ledger}
+            for item in expected_items:
+                row = by_quote[item["quote_no"]]
+                self.assertEqual(item["order_date"], row["order_date"])
+                self.assertEqual(item["delivery_date"], row["invoice_date"])
+                self.assertEqual(item["lead_days"], str((date.fromisoformat(row["invoice_date"])
+                                                         - date.fromisoformat(row["order_date"])).days)
+                                 if row["invoice_date"] else "")
+            self.assertTrue(all((r["customer_contact"], r["contact_title"]) == ("신짱", "대리")
+                                for r in ledger))
             self.assertEqual({r["expected_result"] for r in exceptions}, {"unlinked", "mismatch"})
             self.assertTrue(all(r["po_no"].startswith("PO-VIRTUAL-") for r in exceptions))
             self.assertEqual(len({r["customer"] for r in quotes}), 12)
@@ -117,7 +130,7 @@ class DemoTest(unittest.TestCase):
             for row in (r for r in answer if r["document_type"] == "quote"):
                 items = json.loads(row["items_json"])
                 payload = {"quote_no": row["quote_no"], "quote_date": row["document_date"],
-                           "customer": row["customer"], "customer_contact": "", "contact_title": "",
+                           "customer": row["customer"], "customer_contact": "신짱", "contact_title": "대리",
                            "sales_rep": "가상영업 담당", "quote_amount": int(row["supply_amount"]),
                            "items": [dict(i, remark="SET-01") for i in items]}
                 result = cli("add-quote", payload)

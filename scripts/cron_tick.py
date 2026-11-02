@@ -23,7 +23,8 @@ def require_fictional(rows, ledger, items, blocklist_path=LOCAL_BLOCKLIST):
     if not rows or not items.is_file():
         raise ValueError('가상 대장과 품목 파일이 없습니다. 공유하지 않습니다.')
     if any(not r['customer'].startswith('가상') or not r['sales_rep'].startswith('가상')
-           or r['customer_contact'] or r['contact_title'] for r in rows):
+           or (r['customer_contact'], r['contact_title']) not in (('', ''), ('신짱', '대리'))
+           for r in rows):
         raise ValueError('가상 데이터만 확인되지 않아 공유하지 않습니다.')
     if not blocklist_path.is_file():
         warnings.warn('차단 목록 파일이 없어 문자열 검사를 건너뜁니다.', RuntimeWarning, stacklevel=2)

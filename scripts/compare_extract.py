@@ -78,6 +78,8 @@ def compare(answer_key, extracted_dir, pdf_dir):
             limitations["invoice_items_unverified"] += 1
         before = len(mismatches)
         fields: list[str] = list(BASIC_FIELDS)
+        if kind == "quote" or "도장회신" in filename:
+            fields += ["customer_contact", "contact_title"]
         if kind in ("order", "invoice"):
             fields += ["vat", "total"]
         if kind == "order":
