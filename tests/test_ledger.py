@@ -54,6 +54,34 @@ class LedgerTest(unittest.TestCase):
         self.assertEqual((self.rows("items.csv")[0]["delivery_date"], self.rows("items.csv")[0]["lead_days"]), ("2026-09-20", "10"))
         self.assertIn("매출완", self.run_cmd("show", "quote").stdout)
 
+    def test_document_order_date_takes_priority_over_received_date_and_lead_is_25_days(self):
+        self.assertEqual(self.run_cmd("add-quote", "quote").returncode, 0)
+        result = self.run_cmd("add-order", "order", {
+            "order_document_date": "2026-10-08", "received_date": "2026-10-10"})
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertEqual(self.rows("ledger.csv")[0]["order_date"], "2026-10-08")
+        self.assertEqual(self.rows("items.csv")[0]["order_date"], "2026-10-08")
+        result = self.run_cmd("add-invoice", "invoice", {"invoice_date": "2026-11-02"})
+        self.assertEqual(result.returncode, 0, result.stdout)
+        item = self.rows("items.csv")[0]
+        self.assertEqual((item["delivery_date"], item["lead_days"]), ("2026-11-02", "25"))
+
+    def test_no_document_order_date_uses_confirmed_received_date(self):
+        self.assertEqual(self.run_cmd("add-quote", "quote").returncode, 0)
+        result = self.run_cmd("add-order", "order", {
+            "order_document_date": "", "received_date": "2026-09-10"})
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertEqual(self.rows("ledger.csv")[0]["order_date"], "2026-09-10")
+
+    def test_missing_or_invalid_document_order_date_does_not_write(self):
+        self.assertEqual(self.run_cmd("add-quote", "quote").returncode, 0)
+        before = [(self.data / n).read_bytes() for n in ("ledger.csv", "items.csv")]
+        for changes in ({"order_document_date": "", "received_date": ""},
+                        {"order_document_date": "2026-10-99", "received_date": "2026-10-10"}):
+            result = self.run_cmd("add-order", "order", changes)
+            self.assertNotEqual(result.returncode, 0, result.stdout)
+            self.assertEqual(before, [(self.data / n).read_bytes() for n in ("ledger.csv", "items.csv")])
+
     def test_duplicate_quote_does_not_change_files(self):
         self.run_cmd("add-quote", "quote")
         before = [(self.data / n).read_bytes() for n in ("ledger.csv", "items.csv")]

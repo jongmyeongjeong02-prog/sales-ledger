@@ -215,7 +215,10 @@ def operate(command, payload, data_dir, as_of=None):
                 raise Rejected("도장 회신 견적서는 발주번호를 빈칸으로 기록합니다")
         else:
             required(payload.get("po_no"), "발주번호")
-        order_date = day(payload.get("received_date"), "발주서 전달일/확정 수주일")
+        # 문서상 발주일자가 있으면 전달일보다 우선한다. 없을 때만 담당자 확인일을 사용한다.
+        document_date = payload.get("order_document_date")
+        order_date = (day(document_date, "발주일자") if document_date not in (None, "")
+                      else day(payload.get("received_date"), "담당자 확인 수주일"))
         if stamped:
             amount = integer(payload.get("order_amount"), "공급가액")
             vat = amount // 10
